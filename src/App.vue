@@ -30,6 +30,13 @@ export default {
   width: 95% !important;
   height: 100% !important;
   margin: 0 auto !important;
+  ul{
+    text-indent: 0.2rem;
+    li{
+      clear: both;
+      padding: 0.01rem;
+    }
+  }
   img{
       width: 100% !important;
       height: 100% !important;

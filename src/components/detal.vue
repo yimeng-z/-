@@ -2,15 +2,42 @@
 <template>
   <div class="goods">
     <div class="goodss">
-      <router-link to="/" tag="p" class="goods_back">
+      <!-- <router-link to="/" tag="p"> -->
+      <p class="goods_back" @click="back">
         <i class="el-icon-arrow-left"></i>
-      </router-link>
+      </p>
+      <!-- </router-link> -->
       <van-swipe :autoplay="3000" indicator-color="white" class="block">
         <van-swipe-item v-for="(v,i) in goodsimg" :key="i">
           <img :src="v.pic" alt />
         </van-swipe-item>
       </van-swipe>
-      <div class="goods_infos">
+      <div v-show="!showadd" class="detal_infos">
+        <div class="detal_infos_top">
+          <img :src="this.goodsinfo.pic" alt />
+          <div>
+            <p class="goodsinfo_name" v-html="this.goodsinfo.name"></p>
+            <p class="goodsinfo_price">￥{{this.goodsinfo.minPrice}}.00</p>
+          </div>
+          <span @click="hideadd">X</span>
+        </div>
+        <div class="goods_type" v-for="(v,i) in type" :key="i">
+          <p>{{v.name}}</p>
+          <div>
+            <span :class="border?'typesizes':'typesize'" @click="sizes(item)" v-for="(item,index) in v.childsCurGoods" :key="index">{{item.name}}</span>
+          </div>
+        </div>
+        <div class="detal_infos_bottom">
+          <span>购买数量</span>
+          <p>
+            <button>-</button>
+            <span>1</span>
+            <button @click="addnum">+</button>
+          </p>
+        </div>
+        <p class="detal_addcar" @click="add">加入购物车</p>
+      </div>
+      <div class="goods_infos" v-show="showadd">
         <p class="goods_infos_p1">{{this.goodsinfo.name}}</p>
         <p class="goods_infos_p2">{{this.goodsinfo.characteristic}}</p>
         <p class="goods_infos_p3">
@@ -30,7 +57,19 @@
       <div v-show="cshow" class="contentlist" v-html="this.content.content"></div>
       <div v-show="!cshow">456789</div>
     </div>
-    <div class="goods_footer">立即发起砍价，最低可砍到1元</div>
+    <div class="detal_footer" v-show="showadd">
+      <span>
+        <i class="el-icon-headset"></i>
+      </span>
+      <router-link to="/cart" tag="span">
+        <i class="el-icon-shopping-cart-2"></i>
+      </router-link>
+      <span>
+        <i class="el-icon-star-off"></i>
+      </span>
+      <span>立即购买</span>
+      <span class="add" @click="showadds">加入购物车</span>
+    </div>
   </div>
 </template>
 
@@ -48,7 +87,12 @@ export default {
       goodsinfo: {},
       goodsimg: [],
       content: [],
-      cshow: true
+      cshow: true,
+      showadd: true,
+      type: [],
+      size:{},
+      border:false,
+      num:1
     };
   },
   //监听属性 类似于data概念
@@ -57,9 +101,32 @@ export default {
   watch: {},
   //方法集合
   methods: {
-      change(){
-          this.cshow=!this.cshow
+    sizes(v){
+      // this.border=!this.border
+      // this.size=v
+      // this.border=!this.border
+      // this.size.border=this.border
+    },
+    change() {
+      this.cshow = !this.cshow;
+    },
+    back() {
+      this.$router.go(-1);
+    },
+    showadds() {
+      this.showadd=false;
+    },
+    hideadd(){
+      this.showadd=true
+    },
+    add(){
+      let obj = {
+
       }
+    },
+    addnum(){
+      // this.size.num=this.num
+    }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {},
@@ -71,8 +138,13 @@ export default {
       this.goodsinfo = res.data.data.basicInfo;
       this.goodsimg = res.data.data.pics;
       this.content = res.data.data;
-        console.log(this.goodsinfo);
-        console.log(this.goodsimg);
+      this.type = res.data.data.properties;
+      console.log(this.type)
+      this.type.forEach(v=>{
+        this.size =  v.childsCurGoods
+      })
+      // console.log(this.goodsinfo);
+      console.log(this.size);
     });
   },
   beforeCreate() {}, //生命周期 - 创建之前
@@ -87,4 +159,126 @@ export default {
 <style lang='scss' scoped>
 //@import url(); 引入公共css类
 @import url("../assets/css/goods.css");
+.detal_footer {
+  width: 100%;
+  height: 0.6rem;
+  position: fixed;
+  bottom: 0rem;
+  z-index: 25;
+  text-align: center;
+  display: flex;
+  justify-content: space-around;
+  line-height: 0.6rem;
+  color: black;
+  background-color: #fff;
+  font-size: 0.25rem;
+  span {
+    border-right: 1px solid #eee;
+    width: 20%;
+    i {
+      font-size: 0.3rem;
+      color: gray;
+    }
+  }
+  .add {
+    background-color: darkred;
+    color: #fff;
+  }
+}
+.detal_infos {
+  position: fixed;
+  background-color: white;
+  width: 100%;
+  bottom: 0;
+  margin: 0 auto;
+  .detal_infos_top {
+    width: 95%;
+    margin: 0 auto;
+    height: 1.8rem;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    img {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-top: 0.15rem;
+    }
+    div {
+      margin-left: 0.5rem;
+      height: 1.8rem;
+      line-height: 0.5rem;
+      .goodsinfo_name {
+        margin-top: 0.5rem;
+      }
+      .goodsinfo_price {
+        color: red;
+        font-weight: bolder;
+      }
+    }
+    span{
+      margin-left: 1.2rem;
+      margin-top: 0.2rem;
+      width: 0.3rem;
+      height: 0.3rem;
+      border: 1px solid #eee;
+      text-align: center;
+      border-radius: 50%;
+      color: gray;
+    }
+  }
+  .goods_type {
+    p {
+      margin: 0.2rem;
+    }
+    div {
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.1rem;
+      .typesize {
+        width: 35%;
+        border: 1px solid #ddd;
+        text-align: center;
+        margin: 0.2rem;
+        padding: 0.2rem;
+        border-radius: 0.1rem;
+      }
+      .typesizes{
+        width: 35%;
+        border: 1px solid red;
+        text-align: center;
+        margin: 0.2rem;
+        padding: 0.2rem;
+        border-radius: 0.1rem;
+      }
+    }
+  }
+}
+.detal_infos_bottom {
+  width: 100%;
+  height: 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  p {
+    button {
+      width: 0.5rem;
+      height: 0.5rem;
+      background-color: #eee;
+      border: none;
+      border-radius: 0.05rem;
+    }
+    span {
+      width: 0.5rem;
+      height: 0.5rem;
+    }
+  }
+}
+.detal_addcar{
+  width: 100%;
+  height: 0.6rem;
+  text-align: center;
+  line-height: 0.6rem;
+  color: white;
+  background-color: red;
+}
 </style>

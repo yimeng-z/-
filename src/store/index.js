@@ -9,7 +9,8 @@ const store = new Vuex.Store({
         //筛选
         other: [],
         otherlist: [],
-        addcar:[]
+        addcar:[],
+        tokens:""
     },
     mutations: {
         jingxuan(state, data) {

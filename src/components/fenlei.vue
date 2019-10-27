@@ -12,15 +12,41 @@
         </ul>
       </div>
       <div class="fenlei_list">
-        <ul>
-          <li v-for="(v,i) in this.$store.state.otherlist" :key="i">
-            <img :src="v.icon" alt="">
-            <p>{{v.name}}</p>
-          </li>
-        </ul>
-        <div style="height:1.5rem">
-
+        <div class="block">
+          <el-carousel trigger="click" height="150px">
+            <el-carousel-item v-for="item in 4" :key="item"></el-carousel-item>
+          </el-carousel>
         </div>
+        <ul v-show="!others">
+          <!-- <router-link
+            :to="{path:'/detal',query:{id:v.id}}"
+            v-for="(v,i) in list"
+            :key="i"
+            tag="li"
+            class="renqi_list"
+          >-->
+          <router-link
+            :to="{path:'/classifydetail',query:{id:v.id}}"
+            v-for="(v,i) in this.$store.state.otherlist"
+            :key="i"
+            tag="li"
+          >
+            <img :src="v.icon" alt />
+            <p>{{v.name}}</p>
+          </router-link>
+        </ul>
+        <ul v-show="others">
+          <router-link
+            :to="{path:'/classifydetail',query:{id:v.id}}"
+            v-for="(v,i) in this.$store.state.other"
+            :key="i"
+            tag="li"
+          >
+            <img :src="v.icon" alt />
+            <p>{{v.name}}</p>
+          </router-link>
+        </ul>
+        <div style="height:1.5rem"></div>
       </div>
     </div>
   </div>
@@ -44,6 +70,7 @@ export default {
       //其他数据
       other: [],
       //其他
+      others: true
     };
   },
   //监听属性 类似于data概念
@@ -53,28 +80,30 @@ export default {
   //方法集合
   methods: {
     fenl(v) {
-      this.$store.commit("otherlist",v)
+      this.others = false;
+      this.$store.commit("otherlist", v);
     },
     showall() {
-        this.$store.state.otherlist = this.$store.state.other;
+      this.$store.state.otherlist = this.$store.state.other;
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     _product.fenlei().then(res => {
       this.list = res.data.data;
-        this.$store.state.otherlist= this.$store.state.other
+      this.$store.state.otherlist = this.$store.state.other;
       let pid = this.list.filter(v => {
         return v.pid == 0;
       });
-      this.$store.commit("list",this.list)
+      console.log(this.list);
+      this.$store.commit("list", this.list);
       pid.forEach(v => {
         this.type.push(v.name);
       });
       this.other = this.list.filter(v => {
         return v.pid != 0;
       });
-      this.$store.commit("other",this.other)
+      this.$store.commit("other", this.other);
       console.log(this.other);
     });
   },
@@ -102,6 +131,7 @@ export default {
     background-color: white;
     position: fixed;
     top: 0;
+    z-index: 100;
     box-sizing: border-box;
     padding: 0.15rem;
     border-bottom: 1px solid #ddd;
@@ -129,26 +159,45 @@ export default {
       }
     }
   }
-  .fenlei_list{
+  .fenlei_list {
     width: 90%;
     margin-top: 0.6rem;
     margin-left: 0.2rem;
-    ul{
+    .block {
+      margin-top: 0.1rem;
+      margin-left: 1.25rem;
+      width: 4.8rem;
+    }
+    ul {
       display: flex;
       margin-left: 20%;
       justify-content: space-around;
       flex-wrap: wrap;
-      li{
+      li {
         margin-top: 0.1rem;
         width: 33.3%;
         text-align: center;
-        img{
+        img {
           width: 0.8rem;
           height: 0.8rem;
         }
-
       }
     }
   }
+}
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 150px;
+  margin: 0;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
 }
 </style>

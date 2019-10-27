@@ -7,7 +7,7 @@
     <div class="block">
       <el-carousel width="100%" height="4.5rem" trigger="click">
         <el-carousel-item width="100%" height="4.5rem" v-for="(v,i) in list" :key="i">
-          <a :href="v.linkUrl">
+          <a :href="v.linkUrl" target="blank">
             <img :src="v.picUrl" alt />
           </a>
         </el-carousel-item>
@@ -50,7 +50,7 @@
           <img :src="v.pic" alt />
         </div>
         <div class="first_list_right">
-          <p class="first_list_right_p1">{{v.name}}</p>
+          <p class="first_list_right_p1" v-html="v.name"></p>
           <p class="first_list_right_gray">{{v.characteristic}}</p>
           <div class="first_list_right_small">
             <div>
@@ -151,11 +151,10 @@ export default {
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     _product.list().then(res => {
-      // console.log(res.data)
       this.list = res.data.data;
     });
     _product.first().then(res => {
-      // console.log(res.data.data);
+      console.log(res.data.data);
       this.bargain = res.data.data.filter(v => {
         return v.stores == 100;
       });

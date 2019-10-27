@@ -12,6 +12,9 @@ import Goods from '../components/goods.vue'
 import Login from '../components/login.vue'
 import Zhuan from '../components/zhuan.vue'
 import Detal from '../components/detal.vue'
+import Register from '../components/register.vue'
+import Classifydetail from '../components/classifydetail.vue'
+
 Vue.use(Router)
 
 export default new Router({
@@ -65,6 +68,14 @@ export default new Router({
     {
       path:"/detal/:id?",
       component:Detal
+    },
+    {
+      path:"/register",
+      component:Register
+    },
+    {
+      path:"/classifydetail/:id?",
+      component:Classifydetail
     }
   ]
 })

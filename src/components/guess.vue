@@ -1,7 +1,6 @@
 <!--  -->
 <template>
   <div class="car">
-    <div class="nonecart" v-show="!this.$store.state.addcar.length">暂时没有商品哦</div>
     <div class="car_bottom">
       <p>猜你喜欢</p>
       <div class="cars_lists">
@@ -11,7 +10,6 @@
             v-for="(v,i) in list"
             :key="i"
             tag="li"
-            class="renqi_list"
           >
             <img :src="v.pic" alt />
             <div>
