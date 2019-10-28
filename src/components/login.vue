@@ -38,9 +38,10 @@ export default {
           `https://api.it120.cc/small4/user/m/login?deviceId=007&deviceName=monkey&mobile=${this.loginphone}&pwd=${this.loginpass}`
         )
         .then(res => {
-          localStorage.setItem("tokens", JSON.stringify(res.data.data));
-          console.log(res.data.data.token)
+          console.log(res.data);
           if (res.data.code == 0) {
+            console.log(res.data.data.token);
+            localStorage.setItem("tokens", JSON.stringify(res.data.data));
             this.$store.state.tokens = res.data.data.token;
             this.$router.push({
               path: "/user"

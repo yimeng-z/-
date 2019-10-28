@@ -40,7 +40,7 @@ export default {
       user: "",
       pic: "",
       time: "",
-      trueCode:''
+      trueCode: ""
     };
   },
   //监听属性 类似于data概念
@@ -78,16 +78,37 @@ export default {
           console.log(res);
         });
     },
-    siginnow(){
-      axios.post(`https://api.it120.cc/small4/verification/sms/check?mobile=${this.phone}&code=${this.trueCode}`).then(res=>{
-        if(res.data.code==0){
-          axios.post(`https://api.it120.cc/small4/user/m/register?mobile=${this.phone}&pwd=${this.pass}&code=${this.trueCode}`).then(res=>{
-            this.$router.push({
-              path:"/login"
-            })
-          })
-        }
-      })
+    siginnow() {
+      console.log(123);
+      axios
+        .post(
+          `https://api.it120.cc/small4/verification/sms/check?mobile=${this.phone}&code=${this.trueCode}`
+        )
+        .then(res => {
+          console.log(res.data);
+          if (res.data.code == 0) {
+            axios
+              .post(
+                `https://api.it120.cc/small4/user/m/register?mobile=${this.phone}&pwd=${this.pass}&code=${this.trueCode}`
+              )
+              .then(res => {
+                // if(res.data.code==0){
+                // this.$router.push({
+                //   path:"/login"
+                // })
+                console.log(res.data);
+                // }
+              });
+          } else{
+            axios
+              .post(
+                `https://api.it120.cc/small4/user/m/register?mobile=${this.phone}&pwd=${this.pass}&code=${this.trueCode}`
+              )
+              .then(res => {
+                console.log(res.data.mag);
+              });
+          }
+        });
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）

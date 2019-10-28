@@ -154,7 +154,7 @@ export default {
       this.list = res.data.data;
     });
     _product.first().then(res => {
-      console.log(res.data.data);
+      // console.log(res.data.data);
       this.bargain = res.data.data.filter(v => {
         return v.stores == 100;
       });

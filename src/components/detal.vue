@@ -17,21 +17,34 @@
           <img :src="this.goodsinfo.pic" alt />
           <div>
             <p class="goodsinfo_name" v-html="this.goodsinfo.name"></p>
-            <p class="goodsinfo_price">￥{{this.goodsinfo.minPrice}}.00</p>
+            <p class="goodsinfo_price">￥{{this.goodsinfo.minPrice}}0</p>
           </div>
           <span @click="hideadd">X</span>
         </div>
         <div class="goods_type" v-for="(v,i) in type" :key="i">
           <p>{{v.name}}</p>
-          <div>
-            <span :class="border?'typesizes':'typesize'" @click="sizes(item)" v-for="(item,index) in v.childsCurGoods" :key="index">{{item.name}}</span>
+          <div v-show="v.childsCurGoods.length>1">
+            <span
+              :class="indexs==index?'typesizes':'typesize'"
+              @click="sizes(item,index)"
+              v-for="(item,index) in v.childsCurGoods"
+              :key="index"
+            >{{item.name}}</span>
+          </div>
+          <div v-show="v.childsCurGoods.length<=1">
+            <span
+              :class="indexs1==index?'typesizes':'typesize'"
+              @click="sizee(item,index)"
+              v-for="(item,index) in v.childsCurGoods"
+              :key="index"
+            >{{item.name}}</span>
           </div>
         </div>
         <div class="detal_infos_bottom">
           <span>购买数量</span>
           <p>
-            <button>-</button>
-            <span>1</span>
+            <button @click="jiannum">-</button>
+            <span>{{this.num}}</span>
             <button @click="addnum">+</button>
           </p>
         </div>
@@ -43,7 +56,7 @@
         <p class="goods_infos_p3">
           <span>
             低价
-            <span>￥{{this.goodsinfo.minPrice}}.00</span>
+            <span>￥{{this.goodsinfo.minPrice}}0</span>
           </span>
           <span>原价￥{{this.goodsinfo.originalPrice}}.00</span>
           <span>库存{{this.goodsinfo.minScore}}</span>
@@ -77,7 +90,7 @@
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
 import Product from "../services/views-services.js";
-let _product = new Product();
+const _product = new Product();
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: {},
@@ -90,9 +103,10 @@ export default {
       cshow: true,
       showadd: true,
       type: [],
-      size:{},
-      border:false,
-      num:1
+      num: 1,
+      indexs: 99,
+      indexs1: 88,
+      // shoplist:[],
     };
   },
   //监听属性 类似于data概念
@@ -101,11 +115,20 @@ export default {
   watch: {},
   //方法集合
   methods: {
-    sizes(v){
-      // this.border=!this.border
-      // this.size=v
-      // this.border=!this.border
-      // this.size.border=this.border
+    sizes(item, index) {
+      this.indexs = index;
+      // console.log(this.size);
+    },
+    sizee(item, index) {
+      this.indexs1 = index;
+      // axios.post(``)
+      // console.log(this.color);
+    },
+    jiannum() {
+      this.num--;
+      if (this.num <= 0) {
+        this.num = 0;
+      }
     },
     change() {
       this.cshow = !this.cshow;
@@ -114,18 +137,42 @@ export default {
       this.$router.go(-1);
     },
     showadds() {
-      this.showadd=false;
+      this.showadd = false;
     },
-    hideadd(){
-      this.showadd=true
+    hideadd() {
+      this.showadd = true;
     },
-    add(){
-      let obj = {
+    add() {
+      // let obj = {
+      //   pic: this.goodsinfo.pic,
+      //   name: this.goodsinfo.name,
+      //   price: this.goodsinfo.minPrice,
+      //   num: this.num,
+      //   check: true,
+      //   size: this.size,
+      //   color: this.color,
+      //   id: this.goodsinfo.id
+      // };
+      this.type.forEach(v => {
+        console.log(v.name)
+        // if (v.childsCurGoods.length > 1) {
+        //   if (this.size == "" || this.color == "") {
+        //     alert("请选择商品规格");
+        //     return false;
+        //   }
+        // }else{
+        //   if(this.size==""){
+        //     return false
+        //   }
+        // }
+      });
 
-      }
+      // this.shoplist.push(obj)
+      // console.log(this.shoplist)
+      // this.$store.commit("carlist", obj);
     },
-    addnum(){
-      // this.size.num=this.num
+    addnum() {
+      this.num++;
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
@@ -134,17 +181,11 @@ export default {
   mounted() {
     let { id } = this.$route.query;
     _product.detail(id).then(res => {
-      console.log(res.data.data);
       this.goodsinfo = res.data.data.basicInfo;
       this.goodsimg = res.data.data.pics;
       this.content = res.data.data;
       this.type = res.data.data.properties;
       console.log(this.type)
-      this.type.forEach(v=>{
-        this.size =  v.childsCurGoods
-      })
-      // console.log(this.goodsinfo);
-      console.log(this.size);
     });
   },
   beforeCreate() {}, //生命周期 - 创建之前
@@ -214,7 +255,7 @@ export default {
         font-weight: bolder;
       }
     }
-    span{
+    span {
       margin-left: 1.2rem;
       margin-top: 0.2rem;
       width: 0.3rem;
@@ -242,7 +283,7 @@ export default {
         padding: 0.2rem;
         border-radius: 0.1rem;
       }
-      .typesizes{
+      .typesizes {
         width: 35%;
         border: 1px solid red;
         text-align: center;
@@ -273,7 +314,7 @@ export default {
     }
   }
 }
-.detal_addcar{
+.detal_addcar {
   width: 100%;
   height: 0.6rem;
   text-align: center;

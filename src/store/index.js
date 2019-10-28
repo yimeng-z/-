@@ -10,7 +10,7 @@ const store = new Vuex.Store({
         other: [],
         otherlist: [],
         addcar:[],
-        tokens:""
+        tokens:"",
     },
     mutations: {
         jingxuan(state, data) {
@@ -32,6 +32,10 @@ const store = new Vuex.Store({
             });
             console.log(state.otherlist);
         },
+        carlist(state,data){
+            state.addcar.push(data)
+            console.log(state.addcar)
+        }
     },
     getters: {
     },
