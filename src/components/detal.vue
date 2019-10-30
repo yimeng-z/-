@@ -17,7 +17,7 @@
           <img :src="this.goodsinfo.pic" alt />
           <div>
             <p class="goodsinfo_name" v-html="this.goodsinfo.name"></p>
-            <p class="goodsinfo_price">￥{{this.goodsinfo.minPrice}}0</p>
+            <p ref="changeprice" class="goodsinfo_price">￥{{this.goodsinfo.minPrice}}</p>
           </div>
           <span @click="hideadd">X</span>
         </div>
@@ -25,7 +25,7 @@
           <p>{{v.name}}</p>
           <div v-show="v.childsCurGoods.length>1">
             <span
-              :class="indexs==index?'typesizes':'typesize'"
+              :class="indexs==item.id+','+item.name?'typesizes':'typesize'"
               @click="sizes(item,index)"
               v-for="(item,index) in v.childsCurGoods"
               :key="index"
@@ -33,7 +33,7 @@
           </div>
           <div v-show="v.childsCurGoods.length<=1">
             <span
-              :class="indexs1==index?'typesizes':'typesize'"
+              :class="indexs1==item.id+','+item.name?'typesizes':'typesize'"
               @click="sizee(item,index)"
               v-for="(item,index) in v.childsCurGoods"
               :key="index"
@@ -56,7 +56,7 @@
         <p class="goods_infos_p3">
           <span>
             低价
-            <span>￥{{this.goodsinfo.minPrice}}0</span>
+            <span >￥{{this.goodsinfo.minPrice}}</span>
           </span>
           <span>原价￥{{this.goodsinfo.originalPrice}}.00</span>
           <span>库存{{this.goodsinfo.minScore}}</span>
@@ -76,6 +76,7 @@
       </span>
       <router-link to="/cart" tag="span">
         <i class="el-icon-shopping-cart-2"></i>
+        <mark>{{this.$store.state.addcar.length}}</mark>
       </router-link>
       <span>
         <i class="el-icon-star-off"></i>
@@ -89,8 +90,22 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
+
 import Product from "../services/views-services.js";
 const _product = new Product();
+import toLocal from "../utils/tolocal";
+import axios from 'axios'
+function sp(v) {
+  let str = v;
+  let arr = str.split(",");
+  let id = arr[0];
+  let type = arr[1];
+  return {
+    id,
+    type
+  };
+}
+
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: {},
@@ -104,30 +119,61 @@ export default {
       showadd: true,
       type: [],
       num: 1,
-      indexs: 99,
-      indexs1: 88,
+      indexs: "",
+      indexs1: "",
+      biggoodsid:"",
+      datas:{},
       // shoplist:[],
     };
   },
   //监听属性 类似于data概念
   computed: {},
   //监控data中的数据变化
-  watch: {},
+  watch: {
+    "$store.state.addcar": {
+      handler: function() {
+        toLocal.save("newaddcar", this.$store.state.addcar);
+      },
+      deep:true
+    }
+  },
   //方法集合
   methods: {
     sizes(item, index) {
-      this.indexs = index;
-      // console.log(this.size);
+      this.indexs = item.id + "," + item.name;
+      console.log(item.id,item.propertyId)
+      console.log(this.goodsinfo.id)
+      let arr = {
+        goodid:this.goodsinfo.id,
+        proprty:item.id,
+        childs:item.propertyId
+      }
+      _product.detailprice(arr).then(res=>{
+        this.datas = res.data.data
+        window.localStorage.setItem("goodsinfo",JSON.stringify(this.datas))
+        console.log(this.datas)
+        this.$refs.changeprice.innerHTML="￥" + res.data.data.price
+      })
     },
     sizee(item, index) {
-      this.indexs1 = index;
-      // axios.post(``)
-      // console.log(this.color);
+      this.indexs1 = item.id + "," + item.name;
+      // if(this.type.length>1){
+      //     let arr = {
+      //     goodid:this.goodsinfo.id,
+      //     proprty:item.id,
+      //     childs:item.propertyId
+      //   }
+      //   _product.detailprice(arr).then(res=>{
+      //     this.datas = res.data.data
+      //     console.log(res.data.data)
+      //     this.$refs.changeprice.innerHTML="￥" + res.data.data.price
+      //   })
+      // }
     },
     jiannum() {
       this.num--;
-      if (this.num <= 0) {
-        this.num = 0;
+      if (this.num < 1) {
+        this.num = 1;
       }
     },
     change() {
@@ -143,50 +189,62 @@ export default {
       this.showadd = true;
     },
     add() {
-      // let obj = {
-      //   pic: this.goodsinfo.pic,
-      //   name: this.goodsinfo.name,
-      //   price: this.goodsinfo.minPrice,
-      //   num: this.num,
-      //   check: true,
-      //   size: this.size,
-      //   color: this.color,
-      //   id: this.goodsinfo.id
-      // };
-      this.type.forEach(v => {
-        console.log(v.name)
-        // if (v.childsCurGoods.length > 1) {
-        //   if (this.size == "" || this.color == "") {
-        //     alert("请选择商品规格");
-        //     return false;
-        //   }
-        // }else{
-        //   if(this.size==""){
-        //     return false
-        //   }
-        // }
-      });
-
-      // this.shoplist.push(obj)
-      // console.log(this.shoplist)
-      // this.$store.commit("carlist", obj);
+      if (this.type.length > 1) {
+        if (!this.indexs) {
+          alert("请选择商品尺码");
+          return;
+        }
+        if (!this.indexs1) {
+          alert("请选择商品颜色");
+          return;
+        }
+      } 
+      else if (this.type.length = 1) {
+        if (!this.indexs && !this.indexs1) {
+          alert("请选择商品规格");
+          return;
+        }
+      }
+      let huang = sp(this.indexs);
+      let chuan = sp(this.indexs1);
+      let obj = {
+        pic: this.goodsinfo.pic,
+        name: this.goodsinfo.name,
+        price: this.goodsinfo.minPrice,
+        num: this.num,
+        check: true,
+        sizeid: huang.id,
+        sizestr: huang.type,
+        colorid: chuan.id,
+        colorstr: chuan.type,
+        id: this.goodsinfo.id,
+        time: new Date().getTime(),
+        bigid:this.biggoodsid
+      };
+      this.indexs=""
+      this.indexs1=""
+      alert("加入购物车成功");
+      this.showadd = true;
+      this.$store.commit("carlist", obj);
     },
     addnum() {
       this.num++;
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
-  //生命周期 - 挂载完成（可以访问DOM元素）
-  mounted() {
+  created() {
     let { id } = this.$route.query;
+    this.biggoodsid = id
     _product.detail(id).then(res => {
       this.goodsinfo = res.data.data.basicInfo;
       this.goodsimg = res.data.data.pics;
       this.content = res.data.data;
       this.type = res.data.data.properties;
-      console.log(this.type)
     });
+  },
+  //生命周期 - 挂载完成（可以访问DOM元素）
+  mounted() {
+    
   },
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
@@ -321,5 +379,10 @@ export default {
   line-height: 0.6rem;
   color: white;
   background-color: red;
+}
+mark {
+  background-color: red;
+  border-radius: 50%;
+  color: white;
 }
 </style>

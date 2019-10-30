@@ -9,7 +9,6 @@ import store from './store';
 import "../src/utils/rem"
 import Vant from 'vant';
 import 'vant/lib/index.css';
-
 Vue.use(Vant);
 Vue.use(ElementUI);
 Vue.config.productionTip = false

@@ -7,7 +7,7 @@
       </p>
       <div>
         <router-link v-show="!chack" to="/login" tag="p">点击登陆</router-link>
-        <p v-show="chack" >{{this.user.mobile}}</p>
+        <p v-show="chack">{{this.user.mobile}}</p>
         <p>积分：0</p>
       </div>
     </div>
@@ -45,33 +45,33 @@
     </div>
     <div class="nothing"></div>
     <div class="mine_banner1">
-        <ul>
-            <li>
-                <i style="color:#F86636" class="el-icon-food"></i>
-                <p>我的余额</p>
-                <p style="color:gray">0元</p>
-            </li>
-            <li>
-                <i style="color:#F86636"  class="el-icon-chicken"></i>
-                <p>我的砍价</p>
-            </li>
-            <li>
-                <i style="color:#EDB449"  class="el-icon-sugar"></i>
-                <p>我的礼券</p>
-            </li>
-            <li>
-                <i style="color:#EDB449" class="el-icon-ice-cream"></i>
-                <p>我的收藏</p>
-            </li>
-            <li>
-                <i style="color:#5A9FEC" class="el-icon-hot-water"></i>
-                <p>我的地址</p>
-            </li>
-            <li>
-                <i style="color:#5A9FEC" class="el-icon-tableware"></i>
-                <p>联系客服</p>
-            </li>
-        </ul>
+      <ul>
+        <li>
+          <i style="color:#F86636" class="el-icon-food"></i>
+          <p>我的余额</p>
+          <p style="color:gray">0元</p>
+        </li>
+        <li>
+          <i style="color:#F86636" class="el-icon-chicken"></i>
+          <p>我的砍价</p>
+        </li>
+        <li>
+          <i style="color:#EDB449" class="el-icon-sugar"></i>
+          <p>我的礼券</p>
+        </li>
+        <li>
+          <i style="color:#EDB449" class="el-icon-ice-cream"></i>
+          <p>我的收藏</p>
+        </li>
+        <router-link to="/addaddress" tag="li">
+          <i style="color:#5A9FEC" class="el-icon-hot-water"></i>
+          <p>我的地址</p>
+        </router-link>
+        <li>
+          <i style="color:#5A9FEC" class="el-icon-tableware"></i>
+          <p>联系客服</p>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -79,35 +79,40 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-import axios from 'axios'
+import axios from "axios";
+import toLocal from "../utils/tolocal";
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: {},
   data() {
     //这里存放数据
     return {
-      chack:false,
-      tokens:"",
-      user:{}
+      chack: false,
+      tokens: "",
+      user: {}
     };
   },
   //监听属性 类似于data概念
-  computed: {
-  },
+  computed: {},
   //监控data中的数据变化
   watch: {},
   //方法集合
   methods: {},
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.tokens=this.$store.state.tokens
-    axios.post(`https://api.it120.cc/small4/user/detail?token=${this.tokens}`).then(res=>{
-      if(res.data.code==0){
-        this.chack=true
-        this.user=res.data.data.base
-
-      }
-    })
+    let tok = JSON.parse(localStorage.getItem("tokens"));
+    console.log(tok);
+    this.$store.state.tokens = tok.token;
+    this.tokens = this.$store.state.tokens;
+    console.log(this.tokens);
+    axios
+      .post(`https://api.it120.cc/small4/user/detail?token=${this.tokens}`)
+      .then(res => {
+        if (res.data.code == 0) {
+          this.chack = true;
+          this.user = res.data.data.base;
+        }
+      });
   },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
@@ -191,31 +196,31 @@ export default {
         text-align: center;
         margin-top: 0.1rem;
         width: 25%;
-        i{
-            font-size: 0.5rem;
-            color: gray;
-            margin-bottom: 0.1rem;
+        i {
+          font-size: 0.5rem;
+          color: gray;
+          margin-bottom: 0.1rem;
         }
       }
     }
   }
-  .mine_banner1{
-      width: 100%;
-      height: 5rem;
-      ul{
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          flex-wrap: wrap;
-          li{
-              width: 33.3%;
-              margin-top: 0.5rem;
-              text-align: center;
-              i{
-                  font-size: 0.5rem;
-              }
-          }
+  .mine_banner1 {
+    width: 100%;
+    height: 5rem;
+    ul {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      li {
+        width: 33.3%;
+        margin-top: 0.5rem;
+        text-align: center;
+        i {
+          font-size: 0.5rem;
+        }
       }
+    }
   }
 }
 </style>

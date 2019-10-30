@@ -4,44 +4,43 @@
     <div class="nonecart" v-show="!this.$store.state.addcar.length">暂时没有商品哦</div>
     <div v-show="this.$store.state.addcar.length" class="carlist">
       <p class="carlist_header">
-        <span>编辑</span>
+        <span v-show="allche" @click="updates">编辑</span>
+        <span v-show="!allche" @click="showcheck">完成</span>
         <span>购物车</span>
       </p>
       <ul>
         <li v-for="(v,i) in this.$store.state.addcar" :key="i">
-          <input type="checkbox" v-model="v.check" name id />
+          <input type="checkbox" v-model="v.check" @click="delcheck()" name id />
           <img :src="v.pic" alt />
           <div class="car_button">
             <p>{{v.name}}</p>
             <p>
-              <span>{{v.size.name}}</span>
-              <span>{{v.color.name}}</span>
+              <span>{{v.sizestr}}</span>
+              <span>{{v.colorstr}}</span>
             </p>
             <div>
               <p style="color:red">￥{{v.price}}</p>
               <p>
-                <button>-</button>
+                <button @click="jiannum(i)">-</button>
                 <span>{{v.num}}</span>
-                <button>+</button>
+                <button @click="addnum(i)">+</button>
               </p>
             </div>
           </div>
         </li>
       </ul>
     </div>
-    <div class="car_order" v-show="this.$store.state.addcar.length"
-     >
-      <input type="checkbox" v-model="allcheck" name="" id="">
+    <div class="car_order" v-show="this.$store.state.addcar.length">
+      <input type="checkbox" @click="all" v-model="allche" name id />
       <span>全选</span>
       <div>
-        <span>
-          合计：￥{{}}
-        </span>
-        <span class="order">下单</span>
+        <span>合计：￥{{this.$store.getters.checkprice}}</span>
+        <span v-show="allche" class="order" @click="letsorder">下单</span>
+        <span v-show="!allche" class="order" @click="checkdel">删除</span>
       </div>
     </div>
     <div class="car_bottom">
-      <p>猜你喜欢</p>
+      <p class="guess">猜你喜欢</p>
       <div class="cars_lists">
         <ul>
           <router-link
@@ -61,6 +60,7 @@
         </ul>
       </div>
     </div>
+    <div style="height:2rem"></div>
   </div>
 </template>
 
@@ -69,33 +69,92 @@
 //例如：import 《组件名称》 from '《组件路径》';
 import Product from "../services/views-services";
 const _product = new Product();
+import toLocal from "../utils/tolocal";
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: {},
   data() {
     //这里存放数据
     return {
-      allcheck:true,
       list: [],
-      suiji: parseInt(Math.random() * 27)
+      suiji: parseInt(Math.random() * 27),
+      allche: true
     };
   },
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    // savelocal(){
+    //   return this.$store.state.addcar
+    // }
+  },
   //监控data中的数据变化
-  watch: {},
+  watch: {
+    "$store.state.addcar": {
+      handler: function() {
+        toLocal.save("newaddcar", this.$store.state.addcar);
+      },
+      deep: true
+    }
+  },
   //方法集合
-  methods: {},
+  methods: {
+    showcheck() {
+       this.allche = !this.allche;
+      this.$store.state.addcar.forEach(v => {
+        v.check = true;
+        this.allche = v.check;
+      });
+    },
+    updates() {
+      this.allche = !this.allche;
+      this.$store.state.addcar.forEach(v => {
+        v.check = false;
+        this.allche = v.check;
+      });
+      // this.$store.commit("showcheck");
+    },
+    addnum(i) {
+      this.$store.commit("addnums", i);
+    },
+    all() {
+      this.allche = !this.allche;
+      this.$store.state.addcar.forEach(v => {
+        v.check = this.allche;
+      });
+      // console.log(this.allche);
+      // this.$store.commit("alls");
+    },
+    jiannum(i) {
+      this.$store.commit("jiannums", i);
+    },
+    delcheck() {
+      console.log(1)
+    },
+    letsorder() {
+
+      if (!this.$store.state.tokens) {
+        this.$router.push({
+          path: "/login"
+        });
+      } else {
+        this.$router.push({
+          path: "/purchase"
+        });
+      }
+
+    },
+    checkdel() {
+      this.$store.commit("checkdel");
+    }
+  },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     _product.first().then(res => {
       this.list = res.data.data.splice(this.suiji, 4);
-      // console.log(this.list);
     });
-    console.log(this.$store.state.addcar)
-    this.$store.state.addcar.forEach(v=>{
-      console.log(v)
-    })
+    let data = toLocal.fetch("newaddcar") || [];
+    this.$store.state.addcar = data;
+    // this.$store.commit("trues");
   },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
@@ -116,7 +175,7 @@ export default {
   list-style: none;
   font-size: 0.16rem;
 }
-.car_order{
+.car_order {
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -124,41 +183,44 @@ export default {
   line-height: 0.6rem;
   align-items: center;
   position: fixed;
-  bottom: 1rem;
+  bottom: 0.95rem;
+  z-index: 99;
   background-color: #fff;
-  input{
+  input {
     margin-left: 0.2rem;
-    
   }
-  span{
+  span {
     margin-left: 0.1rem;
   }
-  div{
+  div {
     display: flex;
     margin-top: 0.1rem;
     justify-content: space-between;
     width: 4.3rem;
     margin-left: 1rem;
-  .order{
-    width: 1.3rem;
-    text-align: center;
-    color: #fff;
-    background-color: red;
-  }
+    .order {
+      width: 1.3rem;
+      text-align: center;
+      color: #fff;
+      background-color: red;
+    }
   }
 }
 .carlist {
   width: 100%;
-  .carlist_header{
+  .carlist_header {
     width: 90%;
     height: 0.6rem;
     line-height: 0.6rem;
     margin: 0 auto;
-    span:nth-child(1){
+    span:nth-child(1) {
       font-size: 0.25rem;
       color: red;
     }
-    span:nth-child(2){
+    span:nth-child(2) {
+      font-size: 0.25rem;
+    }
+    span:nth-child(3) {
       font-size: 0.25rem;
       margin-left: 2rem;
     }
@@ -181,15 +243,16 @@ export default {
       }
       .car_button {
         width: 80%;
-        p:nth-of-type(2){
+        p:nth-of-type(2) {
           color: gray;
         }
-        div{
+        div {
           width: 80%;
           display: flex;
           margin-top: 0.1rem;
           justify-content: space-between;
-          button{
+          align-items: center;
+          button {
             width: 0.5rem;
             height: 0.4rem;
             background-color: #eee;
@@ -215,6 +278,10 @@ export default {
   .car_bottom {
     width: 100%;
     text-align: center;
+    margin-top: 0.2rem;
+    .guess {
+      margin-bottom: 0.2rem;
+    }
     .cars_lists {
       width: 98%;
       margin: 0 auto;

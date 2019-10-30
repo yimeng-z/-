@@ -14,7 +14,10 @@ import Zhuan from '../components/zhuan.vue'
 import Detal from '../components/detal.vue'
 import Register from '../components/register.vue'
 import Classifydetail from '../components/classifydetail.vue'
-
+import User_address from '../components/user_address.vue'
+import Purchase from '../components/purchase.vue'
+import Payment from '../components/payment.vue'
+import Addaddress from '../components/addaddress.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -76,6 +79,20 @@ export default new Router({
     {
       path:"/classifydetail/:id?",
       component:Classifydetail
+    },
+    {
+      path:"/purchase",
+      component:Purchase
+    },
+    {
+      path:"/user_address",
+      component:User_address
+    },{
+      path:"/payment/:id?",
+      component:Payment
+    },{
+      path:"/addaddress",
+      component:Addaddress
     }
   ]
 })

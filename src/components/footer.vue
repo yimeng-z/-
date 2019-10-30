@@ -12,6 +12,7 @@
       </router-link>
       <router-link to="/cart" tag="li" active-class="active">
         <i class="el-icon-shopping-cart-2"></i>
+        <mark>{{this.$store.state.addcar.length}}</mark>
         <p>购物车</p>
       </router-link>
       <router-link to="/user" tag="li" active-class="active">
@@ -75,5 +76,10 @@ export default {
   right: 0;
   transform: translateX(50px);
   opacity: 0;
+}
+mark {
+  background-color: red;
+  border-radius: 50%;
+  color: white;
 }
 </style>

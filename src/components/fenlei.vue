@@ -18,13 +18,6 @@
           </el-carousel>
         </div>
         <ul v-show="!others">
-          <!-- <router-link
-            :to="{path:'/detal',query:{id:v.id}}"
-            v-for="(v,i) in list"
-            :key="i"
-            tag="li"
-            class="renqi_list"
-          >-->
           <router-link
             :to="{path:'/classifydetail',query:{id:v.id}}"
             v-for="(v,i) in this.$store.state.otherlist"
