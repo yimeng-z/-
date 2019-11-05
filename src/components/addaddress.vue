@@ -16,7 +16,7 @@
       </p>
       <div @click="show=true" class="chose_address">
         <p>选择地区</p>
-        <div>
+        <div class="cityinfo">
           <p v-for="(v,i) in address" :key="i">{{v.name}}</p>
         </div>
       </div>
@@ -26,19 +26,16 @@
         </van-popup>
       </div>
       <p>
-        <span>选择地址</span>
+        <span>详细地址</span>
         <input type="text" v-model="door" placeholder="街道门牌信息" name id />
       </p>
       <p>
         <span>邮政编码</span>
         <input type="text" v-model="express" placeholder="邮政编码" name id />
       </p>
-      <button @click="keeps">保存</button>
-      <button>从微信读取</button>
-      <button>取消</button>
-      <!-- <el-button type="success">保存</el-button>
-      <el-button type="danger">从微信读取</el-button>
-      <el-button type="info">取消</el-button>-->
+      <button style="background:darkgreen" @click="keeps">保存</button>
+      <button style="background:darkred">从微信读取</button>
+      <button style="background:gray" @click="cancle">取消</button>
     </div>
   </div>
 </template>
@@ -61,7 +58,10 @@ export default {
       express: "",
       show: false,
       san: sanji,
-      address: []
+      address: [],
+      token: "",
+      myaddresses: [],
+      defaults:true
     };
   },
   //监听属性 类似于data概念
@@ -78,6 +78,7 @@ export default {
     },
     getaddress(val) {
       this.address = val;
+      console.log(this.address);
       console.log(this.address[0].name);
       console.log(this.address[1].name);
       // console.log(this.address)
@@ -86,17 +87,43 @@ export default {
       let obj = {
         user: this.user,
         phone: this.phone,
-        
+        cityIds: this.address[1].code,
         door: this.door,
-        express: this.express
+        express: this.express,
+        provinceIds: this.address[0].code,
+        tokens: this.token,
+        default: this.defaults
       };
-      _product.getorder(obj).then(res => {
-        console.log(res);
+      console.log(obj);
+      _product.addaddress(obj).then(res => {
+        let a = res.data.data;
+        this.myaddresses.push(a);
+        this.$store.state.address = this.myaddresses;
+        window.localStorage.setItem(
+          "myaddress",
+          JSON.stringify(this.$store.state.address)
+        );
+        console.log(this.$store.state.address);
+        if (res.data.code == 0) {
+          this.$router.push({
+            path: "/user_address"
+          });
+        }
       });
+    },
+    cancle() {
+      (this.user = ""),
+        (this.phone = ""),
+        (this.door = ""),
+        (this.express = "");
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    let a = JSON.parse(localStorage.getItem("tokens"));
+    this.token = a.token;
+    console.log(this.token);
+  },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
@@ -132,6 +159,33 @@ export default {
   }
 }
 .addaddress_bottom {
+  width: 95%;
+  margin: 0 auto;
   margin-top: 0.9rem;
+  line-height: 1rem;
+  span {
+    margin-left: 0.2rem;
+  }
+  input {
+    border: none;
+    outline: nonoe;
+  }
+  button {
+    width: 100%;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    color: white;
+    border: none;
+    border-radius: 0.1rem;
+    margin-bottom: 0.3rem;
+  }
+}
+.chose_address {
+  display: flex;
+  margin-left: 0.2rem;
+}
+.cityinfo {
+  display: flex;
+  margin-left: 0.2rem;
 }
 </style>

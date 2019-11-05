@@ -9,6 +9,8 @@ import store from './store';
 import "../src/utils/rem"
 import Vant from 'vant';
 import 'vant/lib/index.css';
+import { Dialog } from 'vant';
+Vue.use(Dialog);
 Vue.use(Vant);
 Vue.use(ElementUI);
 Vue.config.productionTip = false

@@ -9,8 +9,15 @@
         <span>购物车</span>
       </p>
       <ul>
-        <li v-for="(v,i) in this.$store.state.addcar" :key="i">
-          <input type="checkbox" v-model="v.check" @click="delcheck()" name id />
+        <li
+          v-for="(v,i) in this.$store.state.addcar"
+          :key="i"
+          @touchstart="showdel"
+          @touchmove="hidedel($event,i)"
+          ref="shoudels"
+        >
+        <el-checkbox class="allcheck" v-model="v.check" @click="delcheck()" ></el-checkbox>
+          <!-- <input type="checkbox" name id /> -->
           <img :src="v.pic" alt />
           <div class="car_button">
             <p>{{v.name}}</p>
@@ -27,12 +34,12 @@
               </p>
             </div>
           </div>
+          <div class="dels" @click="deles(i)">删除</div>
         </li>
       </ul>
     </div>
     <div class="car_order" v-show="this.$store.state.addcar.length">
-      <input type="checkbox" @click="all" v-model="allche" name id />
-      <span>全选</span>
+      <el-checkbox v-model="allche" @click="all" >全选</el-checkbox>
       <div>
         <span>合计：￥{{this.$store.getters.checkprice}}</span>
         <span v-show="allche" class="order" @click="letsorder">下单</span>
@@ -70,6 +77,7 @@
 import Product from "../services/views-services";
 const _product = new Product();
 import toLocal from "../utils/tolocal";
+import { Dialog } from 'vant';
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: {},
@@ -78,7 +86,11 @@ export default {
     return {
       list: [],
       suiji: parseInt(Math.random() * 27),
-      allche: true
+      allche: true,
+      lastposX: "",
+      startposX: "",
+      changes: "",
+      diff: ""
     };
   },
   //监听属性 类似于data概念
@@ -98,8 +110,31 @@ export default {
   },
   //方法集合
   methods: {
+    deles(i) {
+      this.$store.commit("dels", i);
+      this.$refs.shoudels[i].style.left = "0rem";
+    },
+    showdel(e) {
+      //开始
+      this.startposX = e.targetTouches[0].clientX;
+    },
+    hidedel(e, i) {
+      //结束
+      this.lastposX = e.targetTouches[0].clientX;
+      this.changes = i;
+      this.diff = this.startposX - this.lastposX;
+      if (this.diff > 0) {
+        this.$refs.shoudels.map(v => {
+          v.style.left = "0rem";
+        });
+        this.$refs.shoudels[i].style.left = "-1rem";
+      }
+      if (this.diff < 0) {
+        this.$refs.shoudels[i].style.left = "0rem";
+      }
+    },
     showcheck() {
-       this.allche = !this.allche;
+      this.allche = !this.allche;
       this.$store.state.addcar.forEach(v => {
         v.check = true;
         this.allche = v.check;
@@ -128,10 +163,27 @@ export default {
       this.$store.commit("jiannums", i);
     },
     delcheck() {
-      console.log(1)
+      console.log(1);
     },
     letsorder() {
-
+      // Dialog.alert({
+      //   title: "标题",
+      //   message: "弹窗内容"
+      // }).then(() => {
+      //   // on close
+      // });
+      let a = this.$store.state.addcar.every(v => {
+        return v.check == false;
+      });
+      if (a == true ) {
+        Dialog.alert({
+          // title: "",
+          message: "未添加内容"
+        }).then(() => {
+          // on close
+        });
+        return false;
+      }
       if (!this.$store.state.tokens) {
         this.$router.push({
           path: "/login"
@@ -141,7 +193,6 @@ export default {
           path: "/purchase"
         });
       }
-
     },
     checkdel() {
       this.$store.commit("checkdel");
@@ -186,8 +237,8 @@ export default {
   bottom: 0.95rem;
   z-index: 99;
   background-color: #fff;
-  input {
-    margin-left: 0.2rem;
+  .allcheck {
+    margin-left: 0.5rem;
   }
   span {
     margin-left: 0.1rem;
@@ -226,16 +277,19 @@ export default {
     }
   }
   ul {
-    width: 100%;
+    width: 6.4rem;
     box-sizing: border-box;
+    overflow: hidden;
     padding: 0.1rem;
     li {
-      width: 98%;
+      width: 7.4rem;
       margin: 0 auto;
       height: 1.2rem;
       display: flex;
       align-items: center;
       justify-content: space-around;
+      position: relative;
+      transition: all 1s;
       img {
         width: 1rem;
         height: 1rem;
@@ -263,6 +317,14 @@ export default {
       }
     }
   }
+}
+.dels {
+  width: 1rem;
+  height: 1.2rem;
+  text-align: center;
+  line-height: 1.2rem;
+  color: white;
+  background-color: red;
 }
 .car {
   width: 100%;

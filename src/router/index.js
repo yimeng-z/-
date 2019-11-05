@@ -18,6 +18,8 @@ import User_address from '../components/user_address.vue'
 import Purchase from '../components/purchase.vue'
 import Payment from '../components/payment.vue'
 import Addaddress from '../components/addaddress.vue'
+import BargainInfo from '../views/bargainInfo.vue'
+import Orders from '../views/orders.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -93,6 +95,12 @@ export default new Router({
     },{
       path:"/addaddress",
       component:Addaddress
+    },{
+      path:"/bargainInfo/:idinfo?",
+      component:BargainInfo
+    },{
+      path:'/orders',
+      component:Orders
     }
   ]
 })

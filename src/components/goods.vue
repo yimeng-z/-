@@ -16,7 +16,7 @@
         <p class="goods_infos_p3">
           <span>
             低价
-            <span>￥{{this.goodsinfo.minPrice}}.00</span>
+            <span>￥{{this.goodsinfo.minPrice}}0</span>
           </span>
           <span>原价￥{{this.goodsinfo.originalPrice}}.00</span>
           <span>库存{{this.goodsinfo.minScore}}</span>
@@ -28,9 +28,23 @@
         <p :class="!this.cshow?'redd':'toggole_p'" @click="change">商品评价</p>
       </div>
       <div v-show="cshow" class="contentlist" v-html="this.content.content"></div>
-      <div v-show="!cshow">456789</div>
+      <div v-show="!cshow" class="pingjia">
+        <ul>
+          <li v-for="(v,i) in judgment" :key="i">
+            <img src="../assets/287977.jpg" alt />
+            <div>
+              <p>
+                <span>{{v.user.sourceStr}}</span>
+                <span>{{v.goods.goodReputationStr}}</span>
+              </p>
+              <p>{{v.goods.dateReputation}}</p>
+              <p style="color:gray,fontSize:0.14rem">选择规格:{{v.goods.property}}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="goods_footer">立即发起砍价，最低可砍到1元</div>
+    <div @click="bargains" class="goods_footer">立即发起砍价，最低可砍到1元</div>
   </div>
 </template>
 
@@ -48,7 +62,11 @@ export default {
       goodsinfo: {},
       goodsimg: [],
       content: [],
-      cshow: true
+      cshow: true,
+      goodsid: "",
+      judgment: [],
+      kanjias: [],
+      tokens: ""
     };
   },
   //监听属性 类似于data概念
@@ -57,24 +75,44 @@ export default {
   watch: {},
   //方法集合
   methods: {
-      change(){
-          this.cshow=!this.cshow
-      }
+    change() {
+      this.cshow = !this.cshow;
+    },
+    bargains() {
+      this.$router.push({
+        path: "/bargainInfo",
+        query: {
+          id: this.goodsid,
+        }
+      });
+    }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
-  //生命周期 - 挂载完成（可以访问DOM元素）
-  mounted() {
+  created() {
     let { id } = this.$route.query;
+    this.goodsid = id;
     _product.detail(id).then(res => {
-      console.log(res.data.data);
+      // console.log(res.data.data);
       this.goodsinfo = res.data.data.basicInfo;
       this.goodsimg = res.data.data.pics;
       this.content = res.data.data;
-        console.log(this.goodsinfo);
-        console.log(this.goodsimg);
+      // console.log(this.goodsinfo);
+      // console.log(this.goodsimg);
     });
+    _product.kanjialist().then(res => {
+      let a = res.data.data.result.filter(v => {
+        return v.goodsId == this.goodsid;
+      });
+      this.kanjias = a[0].id;
+      console.log(this.kanjias)
+    this.$store.state.kanjiainfo=this.kanjias
+    });
+    let b = JSON.parse(localStorage.getItem("tokens"));
+    this.tokens = b.token;
+
   },
+  //生命周期 - 挂载完成（可以访问DOM元素）
+  mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
   beforeUpdate() {}, //生命周期 - 更新之前

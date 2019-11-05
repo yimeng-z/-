@@ -120,6 +120,28 @@
   color: white;
   font-size: 0.25rem;
 }
+.pingjia {
+  width: 100%;
+  ul {
+    li {
+      width: 100%;
+      height: 1.6rem;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        width: 0.6rem;
+        height: 0.6rem;
+      }
+      div {
+        width: 60%;
+        margin-left: 0.6rem;
+        line-height: 0.4rem;
+      }
+    }
+  }
+}
 .contentlist{
   width: 100% !important;
   height: 100% !important;

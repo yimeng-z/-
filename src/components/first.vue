@@ -171,6 +171,7 @@ export default {
       this.actical = this.actical1.slice(0, 3);
       // console.log(res.data.data)
     });
+   
   },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {

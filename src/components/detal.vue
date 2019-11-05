@@ -56,7 +56,7 @@
         <p class="goods_infos_p3">
           <span>
             低价
-            <span >￥{{this.goodsinfo.minPrice}}</span>
+            <span>￥{{this.goodsinfo.minPrice}}</span>
           </span>
           <span>原价￥{{this.goodsinfo.originalPrice}}.00</span>
           <span>库存{{this.goodsinfo.minScore}}</span>
@@ -68,7 +68,21 @@
         <p :class="!this.cshow?'redd':'toggole_p'" @click="change">商品评价</p>
       </div>
       <div v-show="cshow" class="contentlist" v-html="this.content.content"></div>
-      <div v-show="!cshow">456789</div>
+      <div v-show="!cshow" class="pingjia">
+        <ul>
+          <li v-for="(v,i) in judgment" :key="i">
+            <img src="../assets/287977.jpg" alt />
+            <div>
+              <p>
+                <span>{{v.user.sourceStr}}</span>
+                <span>{{v.goods.goodReputationStr}}</span>
+              </p>
+              <p>{{v.goods.dateReputation}}</p>
+              <p style="color:gray,fontSize:0.14rem">选择规格:{{v.goods.property}}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
     <div class="detal_footer" v-show="showadd">
       <span>
@@ -76,7 +90,7 @@
       </span>
       <router-link to="/cart" tag="span">
         <i class="el-icon-shopping-cart-2"></i>
-        <mark>{{this.$store.state.addcar.length}}</mark>
+        <mark v-show="this.$store.state.addcar.length">{{this.$store.state.addcar.length}}</mark>
       </router-link>
       <span>
         <i class="el-icon-star-off"></i>
@@ -94,7 +108,7 @@
 import Product from "../services/views-services.js";
 const _product = new Product();
 import toLocal from "../utils/tolocal";
-import axios from 'axios'
+import axios from "axios";
 function sp(v) {
   let str = v;
   let arr = str.split(",");
@@ -121,9 +135,10 @@ export default {
       num: 1,
       indexs: "",
       indexs1: "",
-      biggoodsid:"",
-      datas:{},
+      biggoodsid: "",
+      datas: {},
       // shoplist:[],
+      judgment: []
     };
   },
   //监听属性 类似于data概念
@@ -134,26 +149,26 @@ export default {
       handler: function() {
         toLocal.save("newaddcar", this.$store.state.addcar);
       },
-      deep:true
+      deep: true
     }
   },
   //方法集合
   methods: {
     sizes(item, index) {
       this.indexs = item.id + "," + item.name;
-      console.log(item.id,item.propertyId)
-      console.log(this.goodsinfo.id)
+      console.log(item.id, item.propertyId);
+      console.log(this.goodsinfo.id);
       let arr = {
-        goodid:this.goodsinfo.id,
-        proprty:item.id,
-        childs:item.propertyId
-      }
-      _product.detailprice(arr).then(res=>{
-        this.datas = res.data.data
-        window.localStorage.setItem("goodsinfo",JSON.stringify(this.datas))
-        console.log(this.datas)
-        this.$refs.changeprice.innerHTML="￥" + res.data.data.price
-      })
+        goodid: this.goodsinfo.id,
+        proprty: item.id,
+        childs: item.propertyId
+      };
+      _product.detailprice(arr).then(res => {
+        this.datas = res.data.data;
+        window.localStorage.setItem("goodsinfo", JSON.stringify(this.datas));
+        console.log(this.datas);
+        this.$refs.changeprice.innerHTML = "￥" + res.data.data.price;
+      });
     },
     sizee(item, index) {
       this.indexs1 = item.id + "," + item.name;
@@ -198,8 +213,7 @@ export default {
           alert("请选择商品颜色");
           return;
         }
-      } 
-      else if (this.type.length = 1) {
+      } else if ((this.type.length = 1)) {
         if (!this.indexs && !this.indexs1) {
           alert("请选择商品规格");
           return;
@@ -219,10 +233,10 @@ export default {
         colorstr: chuan.type,
         id: this.goodsinfo.id,
         time: new Date().getTime(),
-        bigid:this.biggoodsid
+        bigid: this.biggoodsid
       };
-      this.indexs=""
-      this.indexs1=""
+      this.indexs = "";
+      this.indexs1 = "";
       alert("加入购物车成功");
       this.showadd = true;
       this.$store.commit("carlist", obj);
@@ -234,18 +248,23 @@ export default {
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     let { id } = this.$route.query;
-    this.biggoodsid = id
+    this.biggoodsid = id;
     _product.detail(id).then(res => {
       this.goodsinfo = res.data.data.basicInfo;
       this.goodsimg = res.data.data.pics;
       this.content = res.data.data;
       this.type = res.data.data.properties;
     });
+
+    _product.goodsjudgment(id).then(res => {
+      this.judgment = res.data.data;
+      this.judgment.forEach(v => {
+        console.log(v);
+      });
+    });
   },
   //生命周期 - 挂载完成（可以访问DOM元素）
-  mounted() {
-    
-  },
+  mounted() {},
   beforeCreate() {}, //生命周期 - 创建之前
   beforeMount() {}, //生命周期 - 挂载之前
   beforeUpdate() {}, //生命周期 - 更新之前
@@ -384,5 +403,27 @@ mark {
   background-color: red;
   border-radius: 50%;
   color: white;
+}
+.pingjia {
+  width: 100%;
+  ul {
+    li {
+      width: 100%;
+      height: 1.6rem;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        width: 0.6rem;
+        height: 0.6rem;
+      }
+      div {
+        width: 60%;
+        margin-left: 0.6rem;
+        line-height: 0.4rem;
+      }
+    }
+  }
 }
 </style>

@@ -12,7 +12,7 @@
       </router-link>
       <router-link to="/cart" tag="li" active-class="active">
         <i class="el-icon-shopping-cart-2"></i>
-        <mark>{{this.$store.state.addcar.length}}</mark>
+        <mark v-show="this.$store.state.addcar.length">{{this.$store.state.addcar.length}}</mark>
         <p>购物车</p>
       </router-link>
       <router-link to="/user" tag="li" active-class="active">

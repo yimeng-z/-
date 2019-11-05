@@ -15,7 +15,13 @@ const store = new Vuex.Store({
         allcheck:false,
         orderNumber:{},
         //添加的地址
-        address:[]
+        address:[],
+        //砍价短id
+        kanjiainfo:'',
+        //添加的地址列表
+        addresslist:[],
+        //为ture的地址
+        defaultress:{}
     },
     mutations: {
         jingxuan(state, data) {
@@ -70,6 +76,9 @@ const store = new Vuex.Store({
             state.tokens.push(data)
             console.log(state.tokens)
         },
+        dels(state,data){
+            state.addcar.splice(data,1)
+        },
         showcheck(state) {
             state.addcar.forEach(v => {
                 v.check = !v.check;
@@ -81,6 +90,12 @@ const store = new Vuex.Store({
                 return v.check==false
             })
             state.addcar=obj
+        },
+        changetrue(state,data){
+            state.addresslist.forEach(v=>{
+                v.isDefault = false;
+            })
+            state.addresslist[data].isDefault=true
         }
     },
     getters: {
@@ -94,12 +109,17 @@ const store = new Vuex.Store({
             return parseInt(sum) 
         },
         checkstr(state){
-            let checktrue= state.addcar.filter(v=>{
+            let checktrue = state.addcar.filter(v=>{
                 return v.check==true
             })
             return checktrue
-        }
-
+        },
+        // defaultaddress(state){
+        //     let dfa = state.addresslist.filter(v=>{
+        //         return v.isDefault==true
+        //     })
+        //     return dfa
+        // }
     },
 })
 export default store

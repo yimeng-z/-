@@ -17,10 +17,10 @@
     </div>
     <div class="nothing"></div>
     <div class="mine_order">
-      <div>
+      <router-link to="/orders" tag="div">
         <i class="el-icon-document"></i>
         <span>我的订单</span>
-      </div>
+      </router-link>
       <i class="el-icon-arrow-right"></i>
     </div>
     <div class="mine_nav">
@@ -63,7 +63,7 @@
           <i style="color:#EDB449" class="el-icon-ice-cream"></i>
           <p>我的收藏</p>
         </li>
-        <router-link to="/addaddress" tag="li">
+        <router-link to="/user_address" tag="li">
           <i style="color:#5A9FEC" class="el-icon-hot-water"></i>
           <p>我的地址</p>
         </router-link>

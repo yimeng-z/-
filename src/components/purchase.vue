@@ -5,21 +5,21 @@
       <i class="el-icon-arrow-left"></i>
       <span>确认订单</span>
     </p>
-    <router-link v-show="this.$store.state.address.length" to="/addaddress" tag="div" class="purchase_top">
+    <router-link v-show="defaultadd" to="/user_address" tag="div" class="purchase_top">
       <i class="el-icon-location-information"></i>
-      <div>
-        <p></p>
-        <p>123456</p>
+      <div >
+        <p>{{defaultadd.linkMan}}{{defaultadd.mobile}}</p>
+        <p>{{defaultadd.provinceStr}}{{defaultadd.cityStr}}{{defaultadd.areaStr}}</p>
       </div>
       <i class="el-icon-arrow-right"></i>
     </router-link>
-    <router-link v-show="!this.$store.state.address.length" to="/user_address" tag="div" class="purchase_top">
+    <!-- <router-link v-show="!trueaddress" to="/user_address" tag="div" class="purchase_top">
       <i class="el-icon-location-information"></i>
       <div>
         添加地址
       </div>
       <i class="el-icon-arrow-right"></i>
-    </router-link>
+    </router-link> -->
     <div class="purchase_nothing"></div>
     <p class="purchase_goodslist">商品列表</p>
     <div class="purchase_goodslists">
@@ -72,11 +72,13 @@ export default {
     return {
       gettoken: {},
       datas: {},
-      orderlist: []
+      orderlist: [],
+      defaultadd:{}
     };
   },
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+  },
   //监控data中的数据变化
   watch: {},
   //方法集合
@@ -98,7 +100,6 @@ export default {
         token: this.gettoken.token,
         a: b
       };
-      console.log(b);
       _product.getorder(arr).then(res => {
         this.$store.state.orderNumber = res.data.data
         if(res.data.code==0){
@@ -110,23 +111,23 @@ export default {
           })
         }
       });
-      // axios
-      //   .post(
-      //     `https://api.it120.cc/small4/order/create&token=${this.gettoken.token}&goodsJsonStr=${a}`
-      //   )
-      //   .then(res => {
-      //     console.log(res.data);
-      //   });
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    console.log(this.$store.getters.checkstr);
     this.datas = JSON.parse(window.localStorage.getItem("goodsinfo"));
     let a = JSON.parse(localStorage.getItem("tokens"));
     this.gettoken = a;
-    console.log(this.gettoken);
-    console.log(this.datas);
+    // console.log(this.gettoken);
+    // console.log(this.datas);
+    // console.log(this.trueaddress)
+    _product.defaultadd(this.gettoken.token).then(res=>{
+      this.defaultadd=res.data.data
+      console.log(res.data.data)
+      this.$store.state.defaultress=this.defaultadd
+      
+      // console.log(res.data.data)
+    })
   },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},

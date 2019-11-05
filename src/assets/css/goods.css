@@ -119,6 +119,30 @@
   font-size: 0.25rem;
 }
 
+.pingjia {
+  width: 100%;
+}
+
+.pingjia ul li {
+  width: 100%;
+  height: 1.6rem;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pingjia ul li img {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+.pingjia ul li div {
+  width: 60%;
+  margin-left: 0.6rem;
+  line-height: 0.4rem;
+}
+
 .contentlist {
   width: 100% !important;
   height: 100% !important;

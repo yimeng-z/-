@@ -100,13 +100,111 @@ class Product {
       }
     })
   }
+  //订单列表
+  orderlist(tokensid){
+    return _http.request({
+      type:"post",
+      url:"order/list",
+      data:{
+        tokensid
+      }
+    })
+  }
   //添加地址
   addaddress(add){
     return _http.request({
       type:"post",
       url:"user/shipping-address/add",
       data:{
-        address:add.door
+        address:add.door,
+        cityId:add.cityIds,
+        code:add.express,
+        linkMan:add.user,
+        mobile:add.phone,
+        provinceId:add.provinceIds,
+        token:add.tokens,
+        isDefault:add.default
+      }
+    })
+  }
+  //添加地址列表
+  addresslist(tokens){
+    return _http.request({
+      type:'post',
+      url:"user/shipping-address/list",
+      data:{
+        token:tokens
+      }
+    })
+  }
+  //删除地址
+  deladdress(ids){
+    return _http.request({
+      type:'post',
+      url:'user/shipping-address/delete',
+      data:{
+        token:ids.tokens,
+        id:ids.ids
+      }
+    })
+  }
+  //默认地址接口
+  defaultadd(tokens){
+    return _http.request({
+      type:'post',
+      url:"user/shipping-address/default",
+      data:{
+        token:tokens
+      }
+    })
+  }
+  //商品评价接口
+  goodsjudgment(id){
+    return _http.request({
+      type:"post",
+      url:"shop/goods/reputation",
+      data:{
+        goodsId:id
+      }
+    })
+  }
+  //砍价商品
+  kanjialist(){
+    return _http.request({
+      url:"shop/goods/kanjia/list"
+    })
+  }
+  //发起砍价接口
+  initiate(kanjia){
+    return _http.request({
+      type:"post",
+      url:"shop/goods/kanjia/join",
+      data:{
+        kjid:kanjia.kjid,
+        token:kanjia.token
+      }
+    })
+  }
+  //获取砍价详情
+  kanjiainfo(details){
+    return _http.request({
+      type:'post',
+      url:"shop/goods/kanjia/info",
+      data:{
+        kjid:details.kjid,
+        joiner:details.tokenid
+      }
+    })
+  }
+  //砍一刀
+  cutone(cutoneid){
+    return _http.request({
+      type:"post",
+      url:"shop/goods/kanjia/help",
+      data:{
+        token:cutoneid.token,
+        kjid:cutoneid.kjid,
+        joinerUser:cutoneid.join,
       }
     })
   }

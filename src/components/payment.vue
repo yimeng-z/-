@@ -17,9 +17,9 @@
     </div>
     <div class="payment_address">
       <i class="el-icon-location-information"></i>
-      <div>
-        <p></p>
-        <p></p>
+      <div >
+        <p>{{this.$store.state.defaultress.linkMan}}{{this.$store.state.defaultress.mobile}}</p>
+        <p>{{this.$store.state.defaultress.provinceStr}}{{this.$store.state.defaultress.cityStr}}{{this.$store.state.defaultress.areaStr}}</p>
       </div>
     </div>
     <div class="payment_bottom">
@@ -40,7 +40,11 @@ export default {
     return {};
   },
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    tureaddress() {
+      return this.$store.getters.defaultaddress;
+    }
+  },
   //监控data中的数据变化
   watch: {},
   //方法集合
@@ -105,6 +109,7 @@ export default {
   }
   div{
       margin-left: 0.4rem;
+      line-height: 0.4rem;
       span:nth-child(2){
           color: red;
       }
@@ -124,6 +129,10 @@ export default {
   .el-icon-location-information{
       font-size: 0.6rem;
       color: blue;
+  }
+  div{
+    margin-left: 0.4rem;
+    line-height: 0.4rem;
   }
 }
 .payment_bottom{
