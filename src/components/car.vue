@@ -16,7 +16,7 @@
           @touchmove="hidedel($event,i)"
           ref="shoudels"
         >
-        <el-checkbox class="allcheck" v-model="v.check" @click="delcheck()" ></el-checkbox>
+        <el-checkbox class="allcheck" v-model="v.check" @change="delcheck" ></el-checkbox>
           <!-- <input type="checkbox" name id /> -->
           <img :src="v.pic" alt />
           <div class="car_button">
@@ -39,7 +39,7 @@
       </ul>
     </div>
     <div class="car_order" v-show="this.$store.state.addcar.length">
-      <el-checkbox v-model="allche" @click="all" >全选</el-checkbox>
+      <el-checkbox v-model="allche" @change="all" >全选</el-checkbox>
       <div>
         <span>合计：￥{{this.$store.getters.checkprice}}</span>
         <span v-show="allche" class="order" @click="letsorder">下单</span>
@@ -152,26 +152,21 @@ export default {
       this.$store.commit("addnums", i);
     },
     all() {
-      this.allche = !this.allche;
-      this.$store.state.addcar.forEach(v => {
-        v.check = this.allche;
-      });
-      // console.log(this.allche);
-      // this.$store.commit("alls");
+      // this.allche = !this.allche;
+      // this.$store.state.addcar.forEach(v => {
+      //   v.check = this.allche;
+      // });
+      // // console.log(this.allche);
+      this.$store.commit("alls",this.allche);
     },
     jiannum(i) {
       this.$store.commit("jiannums", i);
     },
     delcheck() {
-      console.log(1);
+      this.$store.commit("delchecks",this.allche);
     },
     letsorder() {
-      // Dialog.alert({
-      //   title: "标题",
-      //   message: "弹窗内容"
-      // }).then(() => {
-      //   // on close
-      // });
+      // this.$store.commit("checkdel");
       let a = this.$store.state.addcar.every(v => {
         return v.check == false;
       });
@@ -193,6 +188,7 @@ export default {
           path: "/purchase"
         });
       }
+      
     },
     checkdel() {
       this.$store.commit("checkdel");

@@ -20,6 +20,8 @@ import Payment from '../components/payment.vue'
 import Addaddress from '../components/addaddress.vue'
 import BargainInfo from '../views/bargainInfo.vue'
 import Orders from '../views/orders.vue'
+import Estimate from '../views/estimate.vue'
+import Waitestimate from '../views/waitestimate.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -101,6 +103,12 @@ export default new Router({
     },{
       path:'/orders',
       component:Orders
+    },{
+      path:"/estimate/:id?",
+      component:Estimate
+    },{
+      path:"/waitestimate",
+      component:Waitestimate
     }
   ]
 })

@@ -37,7 +37,7 @@
           <i class="el-icon-truck"></i>
           <p>待收货</p>
         </li>
-        <li>
+        <li @click="waitestimate">
           <i class="el-icon-chat-line-square"></i>
           <p>待评价</p>
         </li>
@@ -97,7 +97,13 @@ export default {
   //监控data中的数据变化
   watch: {},
   //方法集合
-  methods: {},
+  methods: {
+    waitestimate(){
+      this.$router.push({
+        path:"/waitestimate"
+      })
+    }
+  },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     let tok = JSON.parse(localStorage.getItem("tokens"));

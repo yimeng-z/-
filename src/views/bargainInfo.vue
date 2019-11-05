@@ -22,7 +22,7 @@
       </div>
       <p class="rightnow">
         <span v-if="kamshow">当前价：￥{{judgment.curPrice}}</span>
-        <span v-if="!kamshow">当前价：￥ {{judgment.curPrice-cutone.cutPrice}}</span>
+        <span v-if="!kamshow">当前价：￥ {{num}}</span>
         <span v-if="!kamshow">,已砍：{{cutone.cutPrice}}</span>
       </p>
       <div class="doitbymyself">
@@ -69,7 +69,11 @@ export default {
     };
   },
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    num(){
+      return parseInt(this.judgment.curPrice-this.cutone.cutPrice)
+    }
+  },
   //监控data中的数据变化
   watch: {},
   //方法集合

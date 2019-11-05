@@ -89,6 +89,17 @@ class Product {
       }
     })
   }
+  //下单商品评价
+  order(obj){
+    return _http.request({
+      type:'post',
+      url:"order/reputation",
+      data:{
+        token:obj.token,
+        postJsonString:obj.postJsonString
+      }
+    })
+  }
   //下单获取订单号
   getorder(oinformation){
     return _http.request({

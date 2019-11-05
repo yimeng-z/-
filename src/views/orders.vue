@@ -8,23 +8,25 @@
     <div class="orederlist">
       <ul>
         <li v-for="(v,i) in shuxing" :key="i">
-            <div class="">
-                <div v-for="(item,index) in shuxing[i]" :key="index" class="list_img">
-                    <img :src="item.pic" alt />
-                    <div>
-                    <p>{{item.goodsName}}</p>
-                    <p class="property">{{item.property}}</p>
-                    </div>
-                </div>
+          <div class>
+            <div v-for="(item,index) in shuxing[i]" :key="index" class="list_img">
+              <img :src="item.pic" alt />
+              <div>
+                <p class="property">{{item.goodsName}}</p>
+                <p class="property">{{item.property}}</p>
+              </div>
             </div>
+          </div>
           <div
             class="list_status"
             v-if="item2.id==i"
             v-for="(item2,index2)  in orderlist"
             :key="index2"
           >
-          <p>{{item2.statusStr}}</p>
-          <p>{{item2.orderNumber}}</p>
+            <!-- <router-link to="/estimate"></router-link> -->
+            <p>{{item2.statusStr}}</p>
+            <mark v-text="item2.statusStr=='待评价'?'去评价':''" @click="gotoestimate(item2.id)"></mark>
+            <p>{{item2.orderNumber}}</p>
           </div>
         </li>
       </ul>
@@ -54,6 +56,15 @@ export default {
   watch: {},
   //方法集合
   methods: {
+    gotoestimate(ids) {
+      this.$router.push({
+        path:"/estimate",
+        query:{
+          id:ids
+        }
+      })
+      console.log(ids);
+    },
     back() {
       this.$router.go(-1);
     }
@@ -65,7 +76,8 @@ export default {
     axios
       .post(`https://api.it120.cc/small4/order/list?token=${b}`)
       .then(res => {
-          console.log(res)
+        console.log(res.data.data.goodsMap);
+        console.log(res.data.data.orderList);
         this.shuxing = res.data.data.goodsMap;
         let order = Object.keys(this.shuxing);
         console.log(order);
@@ -74,7 +86,10 @@ export default {
             return v.orderId == j;
           });
         });
-        console.log(this.orderlist);
+        this.$store.state.orderDetail=this.orderlist.filter(v=>{
+          return v.statusStr == "待评价"
+        })
+        console.log(this.$store.state.orderDetail)
       });
     // console.log(this.$store.state.orderNumber.orderNumber)
   },
@@ -134,20 +149,20 @@ export default {
           width: 1rem;
           height: 1rem;
         }
-        div{
-            line-height: 0.4rem;
-            margin-left: 0.2rem;
-            .property{
-                width: 2.5rem;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
+        div {
+          line-height: 0.4rem;
+          margin-left: 0.2rem;
+          .property {
+            width: 2.5rem;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
         }
       }
-      .list_status{
-          width: 20%;
-          margin-left: 0.2rem;
+      .list_status {
+        width: 20%;
+        margin-left: 0.2rem;
       }
     }
   }

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'Vuex'
+import Tolocal from '../utils/tolocal'
 Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
@@ -12,7 +13,7 @@ const store = new Vuex.Store({
         addcar: [],
         tokens: [],
         truechecks: [],
-        allcheck:false,
+        allcheck:'',
         orderNumber:{},
         //添加的地址
         address:[],
@@ -21,7 +22,9 @@ const store = new Vuex.Store({
         //添加的地址列表
         addresslist:[],
         //为ture的地址
-        defaultress:{}
+        defaultress:{},
+        //待评价
+        orderDetail:[]
     },
     mutations: {
         jingxuan(state, data) {
@@ -90,12 +93,32 @@ const store = new Vuex.Store({
                 return v.check==false
             })
             state.addcar=obj
+            Tolocal.save("newaddcar",state.addcar)
+            console.log(state.addcar)
         },
         changetrue(state,data){
             state.addresslist.forEach(v=>{
                 v.isDefault = false;
             })
             state.addresslist[data].isDefault=true
+        },
+        afterorder(state){
+            let obj=state.addcar.filter(v=>{
+                return v.check==false
+            })
+            state.addcar=obj
+        },
+        alls(state,data){
+            state.addcar.map(v=>{
+                v.check=data
+            })
+        },
+        delchecks(state,data){
+            state.addcar.map(v=>{
+                if(v.check==true){
+                    data=true
+                }
+            })
         }
     },
     getters: {

@@ -111,6 +111,7 @@ export default {
           })
         }
       });
+      this.$store.commit("checkdel");
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）

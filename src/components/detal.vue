@@ -74,7 +74,7 @@
             <img src="../assets/287977.jpg" alt />
             <div>
               <p>
-                <span>{{v.user.sourceStr}}</span>
+                <span>评价：{{v.goods.goodReputationRemark}}</span>
                 <span>{{v.goods.goodReputationStr}}</span>
               </p>
               <p>{{v.goods.dateReputation}}</p>
@@ -104,7 +104,7 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-
+import { Dialog } from "vant";
 import Product from "../services/views-services.js";
 const _product = new Product();
 import toLocal from "../utils/tolocal";
@@ -206,16 +206,34 @@ export default {
     add() {
       if (this.type.length > 1) {
         if (!this.indexs) {
-          alert("请选择商品尺码");
+          // alert("请选择商品尺码");
+          Dialog.alert({
+            // title: "",
+            message: "请选择商品尺码"
+          }).then(() => {
+            // on close
+          });
           return;
         }
         if (!this.indexs1) {
-          alert("请选择商品颜色");
+          // alert("请选择商品颜色");
+          Dialog.alert({
+            // title: "",
+            message: "请选择商品颜色"
+          }).then(() => {
+            // on close
+          });
           return;
         }
       } else if ((this.type.length = 1)) {
         if (!this.indexs && !this.indexs1) {
-          alert("请选择商品规格");
+          // alert("请选择商品规格");
+          Dialog.alert({
+            // title: "",
+            message: "请选择商品规格"
+          }).then(() => {
+            // on close
+          });
           return;
         }
       }
@@ -237,7 +255,13 @@ export default {
       };
       this.indexs = "";
       this.indexs1 = "";
-      alert("加入购物车成功");
+      Dialog.alert({
+        // title: "",
+        message: "加入购物车成功"
+      }).then(() => {
+        // on close
+      });
+      // alert("加入购物车成功");
       this.showadd = true;
       this.$store.commit("carlist", obj);
     },

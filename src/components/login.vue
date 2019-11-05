@@ -40,7 +40,6 @@ export default {
         .then(res => {
           console.log(res.data);
           if (res.data.code == 0) {
-            console.log(res.data.data.token);
             localStorage.setItem("tokens", JSON.stringify(res.data.data));
             this.$store.state.tokens = res.data.data.token;
             this.$router.push({
